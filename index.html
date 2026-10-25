@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL 航海图 · 大数据人的 SQL 学习资源站</title>
+<meta name="description" content="全网精选 SQL 学习资源：B站网课、练习平台、GitHub 开源项目、书单、社区经验帖、面试真题、大数据方向进阶。">
+<style>
+  :root{
+    --bg:#0b1020;
+    --bg-soft:#111730;
+    --card:#141b36;
+    --card-hover:#1a2244;
+    --line:rgba(148,163,255,.14);
+    --text:#e8ecff;
+    --muted:#9aa5cf;
+    --accent:#6d8dff;
+    --accent2:#38e0c8;
+    --gold:#ffc861;
+    --pink:#ff7ab0;
+    --radius:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:rgba(109,141,255,.4)}
+
+  /* ---------- 顶部导航 ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:rgba(11,16,32,.78);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1180px;margin:0 auto;padding:0 20px;
+    height:60px;display:flex;align-items:center;gap:18px;
+  }
+  .logo{font-weight:800;font-size:18px;letter-spacing:.5px;white-space:nowrap}
+  .logo .mark{
+    display:inline-grid;place-items:center;width:30px;height:30px;
+    border-radius:9px;margin-right:8px;font-size:13px;color:#0b1020;
+    background:linear-gradient(135deg,var(--accent2),var(--accent));
+    font-weight:900;
+  }
+  .nav-links{display:flex;gap:4px;flex-wrap:wrap;overflow-x:auto;scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{
+    padding:6px 12px;border-radius:999px;font-size:13.5px;color:var(--muted);
+    white-space:nowrap;transition:.2s;
+  }
+  .nav-links a:hover{color:var(--text);background:rgba(109,141,255,.14)}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;max-width:1180px;margin:0 auto;padding:72px 20px 40px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:-120px 0 auto -20%;height:520px;pointer-events:none;
+    background:
+      radial-gradient(600px 300px at 18% 30%,rgba(109,141,255,.22),transparent 70%),
+      radial-gradient(500px 280px at 80% 20%,rgba(56,224,200,.14),transparent 70%);
+    z-index:-1;
+  }
+  .hero .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line);border-radius:999px;
+    padding:5px 14px;font-size:13px;color:var(--muted);margin-bottom:20px;
+    background:rgba(255,255,255,.03);
+  }
+  .hero .badge i{width:7px;height:7px;border-radius:50%;background:var(--accent2);display:inline-block}
+  .hero h1{
+    font-size:clamp(30px,5vw,52px);font-weight:900;letter-spacing:1px;line-height:1.2;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg,var(--accent2),var(--accent) 55%,var(--pink));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.sub{margin-top:16px;color:var(--muted);font-size:16px;max-width:720px}
+  .stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 22px;min-width:130px;
+  }
+  .stat b{font-size:24px;display:block;background:linear-gradient(90deg,#fff,#aab8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{font-size:12.5px;color:var(--muted)}
+
+  /* ---------- 搜索与筛选 ---------- */
+  .toolbar{max-width:1180px;margin:26px auto 0;padding:0 20px}
+  .search-box{
+    display:flex;align-items:center;gap:10px;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:12px 16px;transition:.2s;
+  }
+  .search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,141,255,.15)}
+  .search-box svg{flex:none;opacity:.6}
+  .search-box input{
+    flex:1;background:none;border:none;outline:none;color:var(--text);font-size:15px;
+  }
+  .search-box input::placeholder{color:#6b76a3}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .chip{
+    border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+    padding:5px 14px;border-radius:999px;font-size:13px;cursor:pointer;transition:.2s;user-select:none;
+  }
+  .chip:hover{color:var(--text)}
+  .chip.active{
+    background:linear-gradient(100deg,rgba(109,141,255,.25),rgba(56,224,200,.18));
+    border-color:rgba(109,141,255,.5);color:var(--text);
+  }
+
+  /* ---------- 区块 ---------- */
+  main{max-width:1180px;margin:0 auto;padding:10px 20px 60px}
+  section{margin-top:64px;scroll-margin-top:80px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  .sec-head h2{font-size:26px;font-weight:800;letter-spacing:.5px}
+  .sec-head .en{color:var(--muted);font-size:13px;letter-spacing:2px;text-transform:uppercase}
+  .sec-desc{color:var(--muted);font-size:14.5px;margin-bottom:22px;max-width:820px}
+  .sec-desc a{color:var(--accent);border-bottom:1px dashed rgba(109,141,255,.4)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .empty{
+    display:none;padding:34px;text-align:center;color:var(--muted);
+    border:1px dashed var(--line);border-radius:var(--radius);
+  }
+
+  /* ---------- 卡片 ---------- */
+  .card{
+    position:relative;display:flex;flex-direction:column;gap:10px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;transition:.22s;overflow:hidden;
+  }
+  .card::after{
+    content:"";position:absolute;inset:0;border-radius:var(--radius);pointer-events:none;
+    background:radial-gradient(400px 120px at 20% 0%,rgba(109,141,255,.09),transparent 70%);
+    opacity:0;transition:.22s;
+  }
+  .card:hover{transform:translateY(-3px);border-color:rgba(109,141,255,.4);background:var(--card-hover)}
+  .card:hover::after{opacity:1}
+  .card h3{font-size:15.5px;font-weight:700;line-height:1.5}
+  .card h3 a:hover{color:var(--accent2)}
+  .card .desc{font-size:13.5px;color:var(--muted);flex:1}
+  .card .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+  .pbadge{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:2.5px 9px;border-radius:999px;font-size:11.5px;font-weight:600;
+  }
+  .pbadge.bili{background:rgba(255,122,176,.16);color:#ff9ec4}
+  .pbadge.zhihu{background:rgba(109,141,255,.16);color:#9db4ff}
+  .pbadge.xhs{background:rgba(255,102,102,.16);color:#ff8f8f}
+  .pbadge.gh{background:rgba(56,224,200,.14);color:#5fe8d4}
+  .pbadge.web{background:rgba(255,200,97,.14);color:var(--gold)}
+  .pbadge.nc{background:rgba(148,163,255,.14);color:#b7c1ff}
+  .tag{
+    padding:2px 8px;border-radius:6px;font-size:11px;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);
+  }
+  .metric{color:var(--accent2);font-weight:700}
+  .metric.gold{color:var(--gold)}
+
+  /* ---------- 学习路线 ---------- */
+  .roadmap{display:flex;flex-direction:column;gap:14px}
+  .stage{
+    display:flex;gap:16px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px;transition:.2s;position:relative;
+  }
+  .stage:hover{border-color:rgba(56,224,200,.4)}
+  .stage .num{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    font-weight:900;font-size:17px;color:#0b1020;
+    background:linear-gradient(135deg,var(--accent2),var(--accent));
+  }
+  .stage .body{flex:1}
+  .stage h3{font-size:16.5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .stage h3 .dur{font-size:12px;color:var(--gold);font-weight:600;background:rgba(255,200,97,.1);border:1px solid rgba(255,200,97,.25);padding:2px 9px;border-radius:999px}
+  .stage p{font-size:13.5px;color:var(--muted);margin-top:6px}
+  .stage .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .stage .links a{
+    font-size:12.5px;padding:4px 11px;border-radius:8px;
+    background:rgba(109,141,255,.1);border:1px solid rgba(109,141,255,.25);color:#a9bcff;transition:.2s;
+  }
+  .stage .links a:hover{background:rgba(109,141,255,.22)}
+  .stage input[type=checkbox]{
+    appearance:none;width:22px;height:22px;flex:none;margin-top:4px;cursor:pointer;
+    border:2px solid #4a567f;border-radius:7px;transition:.15s;position:relative;
+  }
+  .stage input[type=checkbox]:checked{background:var(--accent2);border-color:var(--accent2)}
+  .stage input[type=checkbox]:checked::after{
+    content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#0b1020;font-weight:900;font-size:13px;
+  }
+  .stage.done{opacity:.62}
+  .stage.done h3{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.35)}
+  .progress-wrap{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+  .progress{
+    flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;
+  }
+  .progress i{
+    display:block;height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,var(--accent2),var(--accent));transition:.4s;
+  }
+  .progress-label{font-size:13px;color:var(--muted);white-space:nowrap}
+
+  /* ---------- 书单 ---------- */
+  .book .score{
+    font-size:22px;font-weight:900;color:var(--gold);
+  }
+  .book .score small{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px}
+  .level-pill{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:700}
+  .lv-1{background:rgba(56,224,200,.15);color:#5fe8d4}
+  .lv-2{background:rgba(109,141,255,.16);color:#9db4ff}
+  .lv-3{background:rgba(255,122,176,.15);color:#ff9ec4}
+
+  /* ---------- 要点 ---------- */
+  .tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .tip{
+    background:linear-gradient(160deg,rgba(255,200,97,.07),rgba(255,255,255,.02));
+    border:1px solid rgba(255,200,97,.2);border-radius:var(--radius);padding:18px;
+  }
+  .tip h3{font-size:15px;color:var(--gold);margin-bottom:6px}
+  .tip p{font-size:13.5px;color:var(--muted)}
+  .tip p a{color:var(--accent)}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    border-top:1px solid var(--line);margin-top:80px;padding:36px 20px 46px;
+    text-align:center;color:var(--muted);font-size:13px;
+  }
+  footer .heart{color:var(--pink)}
+  #top-btn{
+    position:fixed;right:22px;bottom:26px;z-index:60;width:44px;height:44px;border-radius:50%;
+    border:1px solid var(--line);background:rgba(20,27,54,.9);color:var(--text);
+    cursor:pointer;font-size:17px;opacity:0;pointer-events:none;transition:.25s;backdrop-filter:blur(8px);
+  }
+  #top-btn.show{opacity:1;pointer-events:auto}
+  #top-btn:hover{border-color:var(--accent)}
+
+  @media (max-width:640px){
+    .stage{flex-direction:row}
+    .hero{padding-top:48px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="mark">SQL</span>航海图</div>
+    <div class="nav-links">
+      <a href="#roadmap">学习路线</a>
+      <a href="#courses">B站网课</a>
+      <a href="#practice">练习平台</a>
+      <a href="#github">开源项目</a>
+      <a href="#books">书单</a>
+      <a href="#posts">经验帖</a>
+      <a href="#interview">面试专区</a>
+      <a href="#bigdata">大数据方向</a>
+      <a href="#tips">避坑要点</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="badge"><i></i>数据采集于 2026-10-25 · 来源：B站 / 知乎 / 小红书 / GitHub / 牛客 / 技术社区</span>
+  <h1>SQL 学习资源<span class="grad">航海图</span></h1>
+  <p class="sub">
+    为大数据专业同学整理的全网 SQL 精选资源：从零基础语法、在线刷题、窗口函数进阶，
+    到 Hive / Spark SQL 数仓实战与大厂面试真题。每一条都来自真实平台数据，点击直达原文。
+  </p>
+  <div class="stats">
+    <div class="stat"><b id="stat-total">40+</b><span>精选资源</span></div>
+    <div class="stat"><b>7+</b><span>平台来源</span></div>
+    <div class="stat"><b>6</b><span>学习阶段</span></div>
+    <div class="stat"><b>100%</b><span>真实链接</span></div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="search-box">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9aa5cf" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="search" type="text" placeholder="搜索资源，如：窗口函数 / 面试 / Hive / 牛客 …">
+  </div>
+  <div class="chips" id="chips">
+    <span class="chip active" data-tag="全部">全部</span>
+    <span class="chip" data-tag="入门">入门</span>
+    <span class="chip" data-tag="刷题">刷题</span>
+    <span class="chip" data-tag="进阶">进阶</span>
+    <span class="chip" data-tag="面试">面试</span>
+    <span class="chip" data-tag="大数据">大数据</span>
+    <span class="chip" data-tag="免费">免费</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- ============ 学习路线 ============ -->
+  <section id="roadmap">
+    <div class="sec-head"><h2>🗺️ 六阶段学习路线</h2><span class="en">Roadmap</span></div>
+    <p class="sec-desc">
+      综合知乎高赞回答、牛客面经与 Datawhale 课程整理而成。SQL 是「练」会的不是「看」会的：
+      每个阶段都建议边学边敲，勾选你已完成的阶段（进度会自动保存在本地浏览器）。
+    </p>
+    <div class="progress-wrap">
+      <div class="progress"><i id="progress-bar"></i></div>
+      <span class="progress-label" id="progress-label">0 / 6</span>
+    </div>
+    <div class="roadmap" id="roadmap-list"></div>
+  </section>
+
+  <!-- ============ B站网课 ============ -->
+  <section id="courses">
+    <div class="sec-head"><h2>📺 B站网课精选</h2><span class="en">Bilibili Courses</span></div>
+    <p class="sec-desc">按播放量与口碑筛选的免费视频课。零基础先看「入门」标签，面试前刷「面试」标签。</p>
+    <div class="grid" id="course-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ 练习平台 ============ -->
+  <section id="practice">
+    <div class="sec-head"><h2>⌨️ 在线练习 &amp; 刷题平台</h2><span class="en">Practice</span></div>
+    <p class="sec-desc">
+      社区公认的刷题路径：<b style="color:var(--text)">SQLZoo / SQLBolt 打基础 → 牛客 SQL 篇刷全 → LeetCode 数据库题冲刺</b>。
+      牛客面经原话：「把牛客上全部 SQL 编程题刷遍并多复习几遍，应付大多数面试没问题。」
+    </p>
+    <div class="grid" id="practice-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ GitHub ============ -->
+  <section id="github">
+    <div class="sec-head"><h2>🐙 GitHub 开源项目</h2><span class="en">Open Source</span></div>
+    <p class="sec-desc">带课后题、面试题和学习笔记的开源仓库，Star 数据采集自 GitHub API。</p>
+    <div class="grid" id="github-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ 书单 ============ -->
+  <section id="books">
+    <div class="sec-head"><h2>📚 书单（附豆瓣评分）</h2><span class="en">Books</span></div>
+    <p class="sec-desc">书单来自 ByteByteGo「How to Learn SQL」路径图与知乎高赞回答的交叉推荐，评分取自豆瓣。点击书名直达豆瓣搜索页。</p>
+    <div class="grid" id="book-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ 经验帖 ============ -->
+  <section id="posts">
+    <div class="sec-head"><h2>💬 社区经验帖 &amp; 深度文章</h2><span class="en">Posts</span></div>
+    <p class="sec-desc">知乎、小红书、牛客、公众号上的高赞学习经验：别人怎么学、踩过什么坑、面试考什么。</p>
+    <div class="grid" id="post-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ 面试专区 ============ -->
+  <section id="interview">
+    <div class="sec-head"><h2>🎯 面试冲刺专区</h2><span class="en">Interview</span></div>
+    <p class="sec-desc">
+      数据岗笔试面试 SQL 几乎必考。高频考点：窗口函数（rank / dense_rank / row_number / lag / lead）、
+      连续登录、留存率、TopN、行转列。以下为大厂真题讲解视频与真人面经。
+    </p>
+    <div class="grid" id="interview-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ 大数据方向 ============ -->
+  <section id="bigdata">
+    <div class="sec-head"><h2>🐘 大数据方向进阶</h2><span class="en">Big Data</span></div>
+    <p class="sec-desc">
+      大数据专业的「SQL +」路线：先写熟标准 SQL，再迁移到 Hive SQL / Spark SQL（语法相似、方言差异注意），
+      重点掌握数仓分层建模、分区分桶、数据倾斜优化——这些正是大数据岗面试的核心考点。
+    </p>
+    <div class="grid" id="bigdata-grid"></div>
+    <div class="empty" data-empty>没有匹配的资源，换个关键词试试～</div>
+  </section>
+
+  <!-- ============ 避坑要点 ============ -->
+  <section id="tips">
+    <div class="sec-head"><h2>💡 前辈们的避坑要点</h2><span class="en">Key Takeaways</span></div>
+    <p class="sec-desc">全部提炼自上面这些高赞帖与面经，条条都是前人用面试教训换来的。</p>
+    <div class="tips">
+      <div class="tip"><h3>① 分清「书写顺序」和「执行顺序」</h3><p>写是 SELECT…FROM…WHERE…GROUP BY…HAVING…ORDER BY…LIMIT，执行却是 FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT。理解了它，别名报错、WHERE 里不能用聚合等问题都会豁然开朗。<a href="https://www.zhihu.com/en/answer/1669308406" target="_blank" rel="noopener">知乎高赞详解 →</a></p></div>
+      <div class="tip"><h3>② 窗口函数是面试分水岭</h3><p>rank / dense_rank / row_number 的并列区别、lag / lead 做连续登录、ntile 切分层级——多名面经作者强调「窗口函数非常重要，有些面试官会专门问」。<a href="https://www.nowcoder.com/discuss/353157951122776064" target="_blank" rel="noopener">看真实面经 →</a></p></div>
+      <div class="tip"><h3>③ 别只看视频，动手才是关键</h3><p>多个回答的共同结论：视频/书籍 3 天 + 刷题 4 天，一周即可入门；「最重要的不是看，而是亲手敲」。每学一个语法立刻去 SQLZoo / 牛客找对应题目。</p></div>
+      <div class="tip"><h3>④ 客户端工具选免费的就够</h3><p>Navicat Premium Lite 已官方免费；DBeaver 是 GitHub 高星开源；预算充足可上 DataGrip。MySQL 8.x 社区版作为学习环境完全够用。</p></div>
+      <div class="tip"><h3>⑤ 牛客 + LeetCode 双刷策略</h3><p>牛客 SQL 篇（employees 库 82 题）覆盖校招笔试绝大多数题型；学有余力再刷 LeetCode 数据库题看耗时排名，双刷完「基本没有 SQL 题能难到你」。</p></div>
+      <div class="tip"><h3>⑥ 大数据岗要多答一层「引擎」</h3><p>面试被问 Hive 时，常追问数据倾斜原因与优化、MapJoin 参数、分区裁剪等。SQL 会写只是及格线，懂执行引擎才是加分项（见上方大数据方向专区）。</p></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>SQL 航海图 · 用 <span class="heart">agent-reach</span> 于 2026-10-25 全网采集整理 · B站 / 知乎 / 小红书 / GitHub / 牛客 / 技术社区</p>
+  <p style="margin-top:6px;opacity:.7">所有内容版权归原作者与平台所有，链接仅供学习跳转；播放量、点赞数、Star 数为采集当日数据。</p>
+</footer>
+
+<button id="top-btn" title="回到顶部">↑</button>
+
+<script>
+/* ================= 数据 ================= */
+const COURSES = [
+  {t:"【中字】SQL进阶教程 | 史上最易懂SQL教程！10小时零基础成长SQL大师！！",u:"https://www.bilibili.com/video/BV1UE41147KC",a:"伟大的海伦君",m:"307.5万播放",d:"10小时47分",tags:["入门","进阶","免费"],desc:"外网爆款课程的中文版，从零基础一路讲到高级查询与窗口函数，弹幕口碑极好，适合系统跟完。"},
+  {t:"【全85集】MySQL数据分析零基础小白必看！MySQL数据库基础教程，SQL数据库快速入门！",u:"https://www.bilibili.com/video/BV1wa15BoEDQ",a:"数解万物",m:"134.5万播放",d:"13小时33分",tags:["入门","免费"],desc:"85 集超细致的 MySQL 零基础课，安装、DDL、查询、函数逐一演示，适合完全没接触过数据库的同学。"},
+  {t:"【SQL数据库】SQL两小时半快速入门到精通",u:"https://www.bilibili.com/video/BV1yw4m1S7Be",a:"程序不打烊",m:"76.7万播放",d:"2小时47分",tags:["入门","免费"],desc:"两个多小时讲完 SQL 主干语法，适合赶进度时快速过一遍，之后再靠刷题巩固。"},
+  {t:"SQL必知必会-第1课-了解SQL",u:"https://www.bilibili.com/video/BV1m24y1F7LM",a:"二二的叶",m:"2万播放",d:"32分钟/课",tags:["入门","免费"],desc:"同名经典入门书《SQL必知必会》的配套视频，书 + 视频搭配是知乎高赞推荐的入门组合。"},
+  {t:"【零基础】牛客网SQL非技术入门40道逐题精讲 + 手把手带敲代码刷题（已完结）",u:"https://www.bilibili.com/video/BV1Zx421U7qZ",a:"是橘长不是局长哦",m:"13.9万播放",d:"1小时29分",tags:["刷题","入门","面试","免费"],desc:"逐题精讲牛客 SQL 非技术快速入门 40 题，边讲边敲，数分/大数据岗校招刷题首选搭配。"},
+  {t:"SQL面试必刷！四大类SQL常考题型助你顺利通过数据分析面试",u:"https://www.bilibili.com/video/BV1884y1P7eW",a:"菊安酱",m:"5.8万播放",d:"33分钟",tags:["面试","免费"],desc:"把数分面试 SQL 归纳成四大类常考题型，短小精悍，适合面试前快速梳理套路。"},
+  {t:"大厂SQL面试真题-持续更新中",u:"https://www.bilibili.com/video/BV1Jas2z5Erc",a:"就要旺旺呀",m:"4.5万播放",d:"3小时37分",tags:["面试","免费"],desc:"持续更新的大厂 SQL 面试真题合集，逐题演示完整思考与书写过程。"},
+  {t:"2026版MySQL面试夺命连环60问：索引调优 + SQL优化",u:"https://www.bilibili.com/video/BV1yi6MBwEwo",a:"图灵官方",m:"3.7万播放",d:"4小时49分",tags:["面试","进阶","免费"],desc:"MySQL 八股连环问：索引、事务、锁、执行计划、SQL 优化，后端与大数据岗通用。"},
+  {t:"【大数据Spark SQL】清华博士终于把它讲透了！",u:"https://www.bilibili.com/video/BV1th411H7hJ",a:"高质量Java",m:"2.9万播放",d:"14小时51分",tags:["大数据","进阶","免费"],desc:"Spark SQL 原理与实战：DataFrame、Catalyst 优化器、性能调优，大数据专业进阶必看。"},
+  {t:"数据可视化分析：Tableau/SQL原理与实践",u:"https://www.bilibili.com/video/BV1L5411u7ae",a:"Tableau喜乐君",m:"10.1万播放",d:"系列课",tags:["进阶","免费"],desc:"从 SQL 原理讲到的分析实践课，偏 BI 与可视化方向，适合想往数据分析发展的同学。"}
+];
+
+const BIGDATA = [
+  {t:"黑马程序员Hive全套教程：大数据Hive3.x数仓开发精讲到企业级实战",u:"https://www.bilibili.com/video/BV1L5411u7ae",a:"黑马程序员（B站）",m:"36.7万播放",d:"19小时32分",tags:["大数据","免费"],desc:"大数据专业主推课：Hive DDL/DML、分区分桶、函数、窗口函数、数仓建模与企业级数仓项目全流程。"},
+  {t:"【大数据Spark SQL】清华博士讲透Spark SQL",u:"https://www.bilibili.com/video/BV1th411H7hJ",a:"高质量Java（B站）",m:"2.9万播放",d:"14小时51分",tags:["大数据","进阶","免费"],desc:"Spark SQL 与 Hive SQL 的无缝衔接课，理解 DAG、Catalyst 与 AQE 后写 SQL 会更有底气。"},
+  {t:"wonderful-sql ch06：Hive 数据倾斜的产生原因及优化策略（面试题）",u:"https://github.com/datawhalechina/wonderful-sql/blob/main/ch06_%E5%86%B3%E8%83%9C%E7%A7%8B%E6%8B%9B.md",a:"GitHub · Datawhale",m:"开源面试题",d:"文本",tags:["大数据","面试","免费"],desc:"大数据岗 SQL 面试高频题：倾斜原因（热点键/大表 Join）、salting、MapJoin、两阶段聚合等标准答法。"},
+  {t:"MySQL/Hive 在 Hadoop 大数据集群的安装（基于 CentOS 7）",u:"https://www.bilibili.com/video/BV1dL411y7Np",a:"风烨迈香冬（B站）",m:"5688播放",d:"52分钟",tags:["大数据","免费"],desc:"把 MySQL/Hive 装进 Hadoop 集群的实操演示，配合学校的大数据平台课食用更佳。"}
+];
+
+const PRACTICE = [
+  {t:"SQLZoo",u:"https://sqlzoo.net/wiki/SQL_Tutorial",p:"web",pn:"SQLZoo",m:"免费 · 无需注册",tags:["入门","免费"],desc:"交互式 SQL 教程老牌网站，每节语法配习题与测验。社区建议先完成 0–7 章（SELECT 基础到 JOIN）；注意别用浏览器整页翻译，会弄乱关键词。"},
+  {t:"SQLBolt",u:"https://sqlbolt.com/",p:"web",pn:"SQLBolt",m:"免费 · 英文",tags:["入门","免费"],desc:"短课程 + 即时练习，右侧直接跑查询，界面干净无干扰。英语阅读无压力时的最快上手选择。"},
+  {t:"XUESQL（学SQL）",u:"http://xuesql.cn/",p:"web",pn:"XUESQL",m:"免费 · 中文",tags:["入门","刷题","免费"],desc:"上半页教程手册、下半页在线练习，答对自动跳下一题，还配有免费 B 站视频，中文体验最好的入门站之一。"},
+  {t:"牛客网 · SQL 在线编程篇",u:"https://www.nowcoder.com/ta/sql",p:"nc",pn:"牛客网",m:"部分免费 · 82题",tags:["刷题","面试"],desc:"从「SQL 快速入门」到「大厂面试真题」五档难度，基于经典 employees 库。校招公认的 SQL 笔试准备主阵地，评论区有大佬的优雅解法。"},
+  {t:"LeetCode 数据库题库",u:"https://leetcode.cn/problemset/database/",p:"web",pn:"LeetCode",m:"部分免费",tags:["刷题","面试","进阶"],desc:"按简单/中等/困难分级，能直观看到自己 SQL 的运行耗时并与他人对比，倒逼写出更优查询；部分题目需会员。"},
+  {t:"Kaggle · Intro to SQL",u:"https://www.kaggle.com/learn/intro-to-sql",p:"web",pn:"Kaggle",m:"免费 · 约3小时",tags:["入门","大数据","免费"],desc:"基于 Google BigQuery 的免费 micro-course（含 Advanced SQL），在大数据集上练 SQL，很适合大数据专业，完成可得证书。"},
+  {t:"菜鸟教程 · SQL",u:"https://www.runoob.com/sql/sql-tutorial.html",p:"web",pn:"菜鸟教程",m:"免费 · 中文",tags:["入门","免费"],desc:"最常用的中文语法手册：遇到不懂的关键词/函数直接 Ctrl+F 搜索，随查随用；配套在线实例可运行。"},
+  {t:"DB Fiddle · 在线 SQL 沙盒",u:"https://www.db-fiddle.com/",p:"web",pn:"DB Fiddle",m:"免费 · 多方言",tags:["刷题","免费"],desc:"免安装的在线数据库：MySQL / PostgreSQL / SQLite 等多引擎随便切，验证语洁癖 SQL 或复现面试题的利器。"},
+  {t:"W3Schools SQL",u:"https://www.w3schools.com/sql/",p:"web",pn:"W3Schools",m:"免费 · 英文",tags:["入门","免费"],desc:"经典英文入门教程，每个知识点都有 Try it yourself 在线编辑器，知识点覆盖全面。"}
+];
+
+const GITHUB = [
+  {t:"datawhalechina/wonderful-sql",u:"https://github.com/datawhalechina/wonderful-sql",p:"gh",pn:"GitHub",m:"⭐ 1.1k",tags:["入门","进阶","面试","免费"],desc:"Datawhale 开源课「从 0 到 1 掌握 SQL」：环境搭建 → 基础查询 → 复杂查询 → 集合运算 → 窗口函数 → 决胜秋招面试题，每章带课后题与参考答案。"},
+  {t:"dunwu/db-tutorial",u:"https://github.com/dunwu/db-tutorial",p:"gh",pn:"GitHub",m:"⭐ 5.4k",tags:["进阶","面试"],desc:"后端视角的数据库知识大全：MySQL 原理、索引、事务、Redis、Elasticsearch、HBase 等，八股复习的系统化资料。"},
+  {t:"mouredev/hello-sql",u:"https://github.com/mouredev/hello-sql",p:"gh",pn:"GitHub",m:"⭐ 10.5k",tags:["入门","免费"],desc:"高人气零基础 SQL 课程仓库（西语配套视频），按课时组织练习脚本，结构清晰可照抄练习。"},
+  {t:"YunmaoLeo/Data_Analysis_Interview",u:"https://github.com/YunmaoLeo/Data_Analysis_Interview",p:"gh",pn:"GitHub",m:"面试笔记",tags:["面试","进阶"],desc:"数据分析面试笔记：SQL 知识点 + 窗口函数专项 + 互联网经典 SQL 题 + 统计学 + 业务分析框架，一站式复习。"},
+  {t:"eosphoros-ai/Awesome-Text2SQL",u:"https://github.com/eosphoros-ai/Awesome-Text2SQL",p:"gh",pn:"GitHub",m:"⭐ 3.8k",tags:["进阶","大数据"],desc:"Text2SQL（自然语言转 SQL）前沿资源合集。AI × SQL 是大数据专业很吃香的交叉方向，做毕设/科研可从这里入门。"},
+  {t:"gowthamrajk/SQL-Tutorials",u:"https://github.com/gowthamrajk/SQL-Tutorials",p:"gh",pn:"GitHub",m:"⭐ 507",tags:["入门"],desc:"主题式 MySQL 笔记：从基础操作符到高级查询，适合当速查手册配合刷题使用。"}
+];
+
+const BOOKS = [
+  {t:"《SQL必知必会（第5版）》",s:8.5,lv:["入门","lv-1","入门级"],u:"https://www.douban.com/search?cat=1001&q=SQL必知必会",desc:"最经典的 SQL 极简入门书，薄而精，一章一个知识点。知乎高赞与 ByteByteGo 书单双重推荐的第一本。"},
+  {t:"《SQL基础教程（第2版）》MICK",s:9.2,lv:["入门","lv-1","入门级"],u:"https://www.douban.com/search?cat=1001&q=SQL基础教程",desc:"豆瓣 9.2 神作，日系教材循序渐进、示例丰富，Datawhale wonderful-sql 课程正是以它为蓝本。"},
+  {t:"《SQL进阶教程》MICK",s:9.2,lv:["进阶","lv-2","进阶级"],u:"https://www.douban.com/search?cat=1001&q=SQL进阶教程",desc:"与基础教程同门，讲 CASE 表达式、窗口函数、集合运算的高级用法，是摆脱「SQL 搬砖工」思维的关键一本。"},
+  {t:"《SQL反模式》",s:8.5,lv:["进阶","lv-2","进阶级"],u:"https://www.douban.com/search?cat=1001&q=SQL反模式",desc:"剖析常见数据库设计与 SQL 写法陷阱，帮你建立工程化直觉，避免踩前辈踩过的坑。"},
+  {t:"《MySQL是怎样运行的：从根儿上理解MySQL》",s:9.4,lv:["深入","lv-3","深入级"],u:"https://www.douban.com/search?cat=1001&q=MySQL是怎样运行的",desc:"豆瓣 9.4：用大白话讲透 InnoDB、索引结构、事务与 MVCC，MySQL 八股的终极武器。"},
+  {t:"《高性能MySQL（第3版）》",s:9.2,lv:["深入","lv-3","深入级"],u:"https://www.douban.com/search?cat=1001&q=高性能MySQL",desc:"索引优化、查询优化、高可用架构的行业圣经，面试聊优化与后端开发都靠它镇场。"}
+];
+
+const POSTS = [
+  {t:"知乎 · 零基础怎么学 SQL？多久能上手写？",u:"https://www.zhihu.com/en/answer/1669308406",p:"zhihu",pn:"知乎",m:"高赞回答",tags:["入门"],desc:"开发者视角的系统回答：以 MySQL 入门、分清书写与执行顺序、按角色（开发/分析/DBA）列出必修清单，还点评了 Navicat、DataGrip、DBeaver 等工具。"},
+  {t:"飞书 · SQL学习指南（在线学习路线）",u:"https://docs.feishu.cn/article/wiki/UYyYwr5XCiYS1BkgKJCcouHxnad",p:"web",pn:"飞书文档",m:"实用清单",tags:["入门","刷题","免费"],desc:"极简上手清单：SQLZoo 完成 0–7 章 → 菜鸟教程当语法手册 → 《SQL必知必会》电子书，适合想按部就班走完第一步的人。"},
+  {t:"技术栈 · 如何学习SQL？ByteByteGo 学习路径图 + 12 本书单",u:"https://jishuzhan.net/article/1798150187491790850",p:"web",pn:"技术栈",m:"2024-06",tags:["进阶","入门"],desc:"整理了 YouTube 82 万订阅的 ByteByteGo 频道发布的 SQL 学习路径图，并把 SQL/MySQL 各阶段书单附上豆瓣评分，本书单即由此而来。"},
+  {t:"腾讯云 · 几个SQL在线刷题的网站横评",u:"https://cloud.tencent.com/developer/article/1630014",p:"web",pn:"腾讯云社区",m:"横评文章",tags:["刷题","免费"],desc:"SQLZOO / XUESQL / 牛客 / LeetCode 四站横评，各自优缺点与推荐指数一目了然，选刷题平台前值得读。"},
+  {t:"牛客 · 数据分析零基础学习路径（50+场面试复盘）",u:"https://www.nowcoder.com/discuss/419968424161329152",p:"nc",pn:"牛客网",m:"面经复盘",tags:["面试","入门"],desc:"作者把学习顺序按「面试被考到的概率」排序：B站 MySQL 课 + 窗口函数专题 + 牛客 SQL 面试真题每天刷，实战主义路线图。"},
+  {t:"牛客 · 双非本科数分春招复盘 + 面经",u:"https://www.nowcoder.com/discuss/353157951122776064",p:"nc",pn:"牛客网",m:"2024-08",tags:["面试"],desc:"结论明确：「把牛客全部 SQL 编程题刷遍并多复习几遍，应付大多数面试没问题；窗口函数非常重要！」附大厂笔试 SQL 题型实录。"},
+  {t:"公众号 · TMD 三道热门数据分析 SQL 面试题精讲",u:"https://mp.weixin.qq.com/s/Qg1Bacw5ta9Jnbs6ImqAZw",p:"web",pn:"微信公众号",m:"窗口函数专题",tags:["面试","进阶"],desc:"以外卖/支付/短视频三家大厂真题讲窗口函数三类用法：row_number 取 Top1、ntile 切前 20%、lead 判连续登录，可直接背套路。"},
+  {t:"小红书 · SQL学习经验篇",u:"https://www.xiaohongshu.com/search_result/69c7c071000000001d0181d3?xsec_token=AB3TfBMYTNnJEYzsr33viikXcyuwRllSlf50ytHc_Ymck=&xsec_source=",p:"xhs",pn:"小红书",m:"1135赞",tags:["入门"],desc:"高赞经验帖：从工具选择到练习节奏的完整心得，适合和小红书上的其他学习搭子帖互相印证。"},
+  {t:"小红书 · 学SQL去哪练？7个宝藏练习平台",u:"https://www.xiaohongshu.com/search_result/6ad4bc91000000001d02de80?xsec_token=ABJs7VJnEQHXlG4zTBLpUNUUUoFdwB31g2Y3JZyr4U7mE=&xsec_source=",p:"xhs",pn:"小红书",m:"729赞 · 2026-10",tags:["刷题","免费"],desc:"7 个练习平台的亲测盘点，与本文练习平台专区高度互补，适合收藏对照使用。"},
+  {t:"小红书 · SQL学习全流程详解 SOP",u:"https://www.xiaohongshu.com/search_result/6acf269b0000000018013e48?xsec_token=AB3iTrWid7RIAslc4sFwyJb6rPwL-gWDLltUsSDVkLajo=&xsec_source=",p:"xhs",pn:"小红书",m:"815赞 · 2026-10",tags:["入门"],desc:"把 SQL 学习拆成标准化 SOP 流程图，步骤感和可执行性很强，适合做周计划。"},
+  {t:"小红书 · 练完这160道SQL，你也是高手了！",u:"https://www.xiaohongshu.com/search_result/69cb2b8a0000000023005a82?xsec_token=ABCPNYvcf2ZmCxrJ8xDcQYPrYUNJnf2djaLu0_9FM2D_A=&xsec_source=",p:"xhs",pn:"小红书",m:"652赞",tags:["刷题","面试"],desc:"160 道分类 SQL 题清单，按题型递进，可作为牛客之外的加餐题库。"}
+];
+
+const INTERVIEW = [
+  {t:"大厂SQL面试真题-持续更新中",u:"https://www.bilibili.com/video/BV1Jas2z5Erc",p:"bili",pn:"B站",m:"4.5万播放 · 3.6h",tags:["面试","免费"],desc:"大厂真题逐题讲解合集，持续更新中，适合每天刷几道保持手感。"},
+  {t:"压箱底的SQL面试宝典：微众银行 5 道SQL面试真题讲解",u:"https://www.bilibili.com/video/BV1GL4y157pr",p:"bili",pn:"B站",m:"1.7万播放 · 5h",tags:["面试","免费"],desc:"以微众银行真题为例的完整通关讲解，从读题、拆解到写出可运行 SQL。"},
+  {t:"2026版MySQL面试夺命连环60问",u:"https://www.bilibili.com/video/BV1yi6MBwEwo",p:"bili",pn:"B站",m:"3.7万播放 · 4.8h",tags:["面试","进阶","免费"],desc:"索引调优 + SQL 优化 + 事务锁等八股连环问，非技术深究岗可只看高频 30 问。"},
+  {t:"小红书 · 大厂SQL面试真题：窗口函数5连问（附答案）",u:"https://www.xiaohongshu.com/search_result/6a89b14600000000380010d3?xsec_token=AB36tzQmrSjl7pWcNMShl9WM7C9UdrJT5qKXKV6DYqFh8=&xsec_source=",p:"xhs",pn:"小红书",m:"528赞 · 2026-08",tags:["面试","进阶"],desc:"五道窗口函数真题带答案，面试前夜速刷神器。"},
+  {t:"小红书 · SQL面试真的很水的，来来回回无非就这165道",u:"https://www.xiaohongshu.com/search_result/69bbcb77000000001a021b42?xsec_token=ABtHcJDiPTeJYe3wbzsQcj47ttQF_AhPMw4IaTgUunCUE=&xsec_source=",p:"xhs",pn:"小红书",m:"2026-03",tags:["面试","刷题"],desc:"165 道高频题汇总帖，配合牛客真题交叉刷。"},
+  {t:"小红书 · 谁懂啊京东SQL考到我怀疑人生",u:"https://www.xiaohongshu.com/search_result/6ad5e5b6000000001e0352f7?xsec_token=ABgQdr8ofWxxMhUoka4Ngx_Pg6fD0oY82dvQ_I4YLVz50=&xsec_source=",p:"xhs",pn:"小红书",m:"701赞 · 2026-10",tags:["面试"],desc:"大厂笔试现场实录帖：题型、难度与复盘，提前感受笔试强度。"},
+  {t:"GitHub · wonderful-sql ch06 决胜秋招（30+ 道面试练习题）",u:"https://github.com/datawhalechina/wonderful-sql/blob/main/ch06_%E5%86%B3%E8%83%9C%E7%A7%8B%E6%8B%9B.md",p:"gh",pn:"GitHub",m:"开源题库",tags:["面试","刷题","免费"],desc:"行转列/列转行、连续登录、明星带货主播、用户购买推荐等经典面试题 + 参考答案，大数据岗面试常从中出题。"},
+  {t:"GitHub · Data_Analysis_Interview SQL 章节",u:"https://github.com/YunmaoLeo/Data_Analysis_Interview",p:"gh",pn:"GitHub",m:"开源笔记",tags:["面试","进阶"],desc:"rank/dense_rank/row_number 对比、CUME_DIST、FIRST_VALUE、LAG/LEAD 全覆盖，配互联网经典 SQL 题。"}
+];
+
+const ROADMAP = [
+  {n:"01",t:"环境搭建",d:"安装 MySQL 8.x 社区版 + 一个图形客户端（Navicat Premium Lite 官方免费 / DBeaver 开源）。目标：能连库、建表、跑通第一条 SELECT。",dur:"1 天",links:[["Datawhale 环境搭建教程","https://github.com/datawhalechina/wonderful-sql/blob/main/ch00_%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.md"],["Navicat Premium Lite 下载","https://www.navicat.com.cn/download/navicat-premium-lite"]]},
+  {n:"02",t:"语法入门",d:"跟一门 B站入门课（推荐 10 小时 SQL 大师课或 MySQL 85 集），同步在 SQLZoo（0–7 章）/ SQLBolt / XUESQL 边学边练。书配《SQL必知必会》。",dur:"1–2 周",links:[["B站10小时大师课","https://www.bilibili.com/video/BV1UE41147KC"],["SQLZoo","https://sqlzoo.net/wiki/SQL_Tutorial"],["SQLBolt","https://sqlbolt.com/"],["XUESQL","http://xuesql.cn/"]]},
+  {n:"03",t:"刷题巩固",d:"牛客 SQL 篇按「快速入门 → 必知必会 → 基础进阶」顺序刷，配合 wonderful-sql 每章课后题。目标：JOIN / GROUP BY / 子查询 / UNION 形成肌肉记忆。",dur:"2–4 周",links:[["牛客SQL篇","https://www.nowcoder.com/ta/sql"],["wonderful-sql","https://github.com/datawhalechina/wonderful-sql"],["牛客40题精讲视频","https://www.bilibili.com/video/BV1Zx421U7qZ"]]},
+  {n:"04",t:"进阶提高",d:"主攻窗口函数（rank / dense_rank / row_number / lag / lead / ntile）、CASE 表达式、CTE 与执行顺序原理。书配《SQL进阶教程》，题刷 LeetCode 数据库中等难度。",dur:"2–4 周",links:[["SQL进阶教程(书)","https://www.douban.com/search?cat=1001&q=SQL进阶教程"],["LeetCode数据库","https://leetcode.cn/problemset/database/"],["wonderful-sql ch05","https://github.com/datawhalechina/wonderful-sql/blob/main/ch05_SQL%E9%AB%98%E7%BA%A7%E5%A4%84%E7%90%86.md"]]},
+  {n:"05",t:"大数据方向",d:"从标准 SQL 迁移到 Hive SQL（黑马 Hive 全套课）与 Spark SQL，重点：分区分桶、数仓分层、函数方言差异、数据倾斜优化——大数据岗面试核心考点。",dur:"3–6 周",links:[["黑马Hive全套教程","https://www.bilibili.com/video/BV1L5411u7ae"],["Spark SQL精讲","https://www.bilibili.com/video/BV1th411H7hJ"],["Kaggle BigQuery SQL","https://www.kaggle.com/learn/intro-to-sql"]]},
+  {n:"06",t:"面试冲刺",d:"牛客「SQL大厂面试真题」全刷 + B站大厂真题视频 + 小红书 165 题/窗口函数 5 连问，八股看 MySQL 60 问。刷完即可从容应对数分/数开/大数据岗笔试面试。",dur:"2 周",links:[["牛客SQL真题","https://www.nowcoder.com/ta/sql"],["大厂真题视频","https://www.bilibili.com/video/BV1Jas2z5Erc"],["决胜秋招题库","https://github.com/datawhalechina/wonderful-sql/blob/main/ch06_%E5%86%B3%E8%83%9C%E7%A7%8B%E6%8B%9B.md"]]}
+];
+
+/* ================= 渲染 ================= */
+const $=s=>document.querySelector(s);
+function pbadge(p,pn){
+  const map={bili:"bili",zhihu:"zhihu",xhs:"xhs",gh:"gh",web:"web",nc:"nc"};
+  return `<span class="pbadge ${map[p]||"web"}">${pn}</span>`;
+}
+function tagsHtml(tags){
+  return tags.map(t=>`<span class="tag" data-tag="${t}">${t}</span>`).join("");
+}
+function cardHtml(o,extra=""){
+  const p = o.p || (o.u.includes("bilibili.com") ? "bili" : o.u.includes("github.com") ? "gh" : "web");
+  const pn = o.pn || ({bili:"B站",gh:"GitHub",zhihu:"知乎",xhs:"小红书",nc:"牛客网",web:"网页"}[p] || "网页");
+  return `<article class="card" data-title="${o.t.toLowerCase()}" data-tags="${o.tags.join(" ")}" data-desc="${(o.desc||"").toLowerCase()}">
+    <h3><a href="${o.u}" target="_blank" rel="noopener">${o.t}</a></h3>
+    ${o.desc?`<p class="desc">${o.desc}</p>`:""}
+    <div class="meta">${pbadge(p,pn)}
+      ${o.m?`<span class="metric">${o.m}</span>`:""}${o.d?`<span>· ${o.d}</span>`:""}
+      ${o.a?`<span>· ${o.a}</span>`:""}${extra}${tagsHtml(o.tags)}
+    </div>
+  </article>`;
+}
+$("#course-grid").innerHTML = COURSES.map(o=>cardHtml(o)).join("");
+$("#practice-grid").innerHTML = PRACTICE.map(o=>cardHtml(o)).join("");
+$("#github-grid").innerHTML = GITHUB.map(o=>cardHtml(o)).join("");
+$("#bigdata-grid").innerHTML = BIGDATA.map(o=>cardHtml(o)).join("");
+$("#interview-grid").innerHTML = INTERVIEW.map(o=>cardHtml(o)).join("");
+$("#post-grid").innerHTML = POSTS.map(o=>cardHtml(o)).join("");
+$("#book-grid").innerHTML = BOOKS.map(b=>`
+  <article class="card book" data-title="${b.t.toLowerCase()}" data-tags="${b.lv[0]}" data-desc="${b.desc.toLowerCase()}">
+    <h3><a href="${b.u}" target="_blank" rel="noopener">${b.t}</a></h3>
+    <p class="desc">${b.desc}</p>
+    <div class="meta"><span class="score">${b.s}<small>/10</small></span>
+      <span class="level-pill ${b.lv[1]}">${b.lv[2]}</span>${pbadge("web","豆瓣可查")}${tagsHtml([b.lv[0]])}
+    </div>
+  </article>`).join("");
+
+/* 学习路线 */
+$("#roadmap-list").innerHTML = ROADMAP.map((s,i)=>`
+  <div class="stage" data-i="${i}">
+    <input type="checkbox" data-stage="${i}" aria-label="完成阶段${s.n}">
+    <div class="num">${s.n}</div>
+    <div class="body">
+      <h3>${s.t} <span class="dur">⏱ ${s.dur}</span></h3>
+      <p>${s.d}</p>
+      <div class="links">${s.links.map(l=>`<a href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join("")}</div>
+    </div>
+  </div>`).join("");
+
+/* 进度持久化 */
+const KEY="sql-roadmap-v1";
+let done=JSON.parse(localStorage.getItem(KEY)||"[]");
+function syncProgress(){
+  document.querySelectorAll(".stage input").forEach(cb=>{
+    const i=+cb.dataset.stage;cb.checked=done.includes(i);
+    cb.closest(".stage").classList.toggle("done",cb.checked);
+  });
+  $("#progress-bar").style.width=(done.length/ROADMAP.length*100)+"%";
+  $("#progress-label").textContent=`${done.length} / ${ROADMAP.length}`;
+}
+document.querySelectorAll(".stage input").forEach(cb=>cb.addEventListener("change",()=>{
+  const i=+cb.dataset.stage;
+  done=cb.checked?[...new Set([...done,i])]:done.filter(x=>x!==i);
+  localStorage.setItem(KEY,JSON.stringify(done));syncProgress();
+}));
+syncProgress();
+
+/* 搜索 + 筛选 */
+let activeTag="全部";
+const sections=["course","practice","github","book","post","interview","bigdata"];
+function applyFilter(){
+  const q=$("#search").value.trim().toLowerCase();
+  sections.forEach(name=>{
+    const grid=document.getElementById(name+"-grid");
+    if(!grid)return;
+    let visible=0;
+    grid.querySelectorAll(".card").forEach(c=>{
+      const tags=[...(c.dataset.tags||"").split(" ")];
+      const okTag=activeTag==="全部"||tags.includes(activeTag);
+      const hay=(c.dataset.title+" "+tags.join(" ")+" "+(c.dataset.desc||"")).toLowerCase();
+      const okQ=!q||hay.includes(q);
+      const show=okTag&&okQ;c.style.display=show?"":"none";if(show)visible++;
+    });
+    const empty=grid.parentElement.querySelector(".empty");
+    if(empty)empty.style.display=visible?"none":"block";
+    /* 隐藏整个没有可见卡片的区块 */
+    const sec=grid.closest("section");
+    const isRoadmap=sec&&sec.id==="roadmap";
+    if(sec&&!isRoadmap){
+      const hasStatic=sec.querySelector(".tips");
+      sec.style.display=(visible||hasStatic)?"":"none";
+    }
+  });
+}
+$("#search").addEventListener("input",applyFilter);
+document.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  ch.classList.add("active");activeTag=ch.dataset.tag;applyFilter();
+}));
+
+/* 统计 */
+const total=COURSES.length+PRACTICE.length+GITHUB.length+BOOKS.length+POSTS.length+INTERVIEW.length+BIGDATA.length;
+$("#stat-total").textContent=total+"+";
+
+/* 回到顶部 */
+const topBtn=$("#top-btn");
+topBtn.addEventListener("click",()=>scrollTo({top:0,behavior:"smooth"}));
+addEventListener("scroll",()=>topBtn.classList.toggle("show",scrollY>600));
+</script>
+</body>
+</html>
